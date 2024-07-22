@@ -4,6 +4,7 @@ using kokshengbi.Application.Common.Exceptions;
 using kokshengbi.Application.Common.Models;
 using kokshengbi.Application.Common.Utils;
 using kokshengbi.Application.Users.Commands.Register;
+using kokshengbi.Application.Users.Commands.UpdateUser;
 using kokshengbi.Application.Users.Queries.GetCurrentUser;
 using kokshengbi.Application.Users.Queries.Login;
 using kokshengbi.Contracts.User;
@@ -86,6 +87,22 @@ namespace kokshengbi.Api.Controllers
             var response = _mapper.Map<UserSafetyResponse>(currentSafetyUser);
 
             return ResultUtils.success(response);
+        }
+
+        [HttpPost]
+        public async Task<BaseResponse<int>> updateUser(UpdateUserRequest request)
+        {
+            if (request == null)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+
+            var userState = HttpContext.Session.GetString(ApplicationConstants.USER_LOGIN_STATE);
+
+            var command = _mapper.Map<UpdateUserCommand>(request);
+            // Assign the userState
+            command = command with { userState = userState };
+            return await _mediator.Send(command);
         }
     }
 }

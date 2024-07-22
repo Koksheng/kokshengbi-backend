@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using kokshengbi.Application.Users.Commands.Register;
+using kokshengbi.Application.Users.Commands.UpdateUser;
 using kokshengbi.Application.Users.Common;
 using kokshengbi.Application.Users.Queries.Login;
 using kokshengbi.Contracts.User;
@@ -36,10 +37,10 @@ namespace kokshengbi.Application.MappingProfiles
             //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id > 0 ? UserId.Create(src.Id) : null)); // Adjust based on how UserId is created
             //CreateMap<UserSafetyResult, AdminPageUserSafetyResponse>();
 
-            //// Update
-            //CreateMap<UpdateUserRequest, UpdateUserCommand>()
-            //    .ForCtorParam("userState", opt => opt.MapFrom(src => string.Empty));
-            //CreateMap<UpdateUserCommand, User>();
+            // Update
+            CreateMap<UpdateUserRequest, UpdateUserCommand>()
+                .ForCtorParam("userState", opt => opt.MapFrom(src => string.Empty));
+            CreateMap<UpdateUserCommand, User>();
 
             //// Mapping for PaginatedList<UserSafetyResult> to PaginatedList<UserSafetyResponse>
             //CreateMap(typeof(PaginatedList<>), typeof(PaginatedList<>)).ConvertUsing(typeof(PaginatedListTypeConverter<,>));
