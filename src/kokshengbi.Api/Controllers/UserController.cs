@@ -6,6 +6,7 @@ using kokshengbi.Application.Common.Utils;
 using kokshengbi.Application.Users.Commands.Register;
 using kokshengbi.Application.Users.Commands.UpdateUser;
 using kokshengbi.Application.Users.Queries.GetCurrentUser;
+using kokshengbi.Application.Users.Queries.ListUserByPage;
 using kokshengbi.Application.Users.Queries.Login;
 using kokshengbi.Contracts.User;
 using kokshengbi.Domain.Constants;
@@ -103,6 +104,22 @@ namespace kokshengbi.Api.Controllers
             // Assign the userState
             command = command with { userState = userState };
             return await _mediator.Send(command);
+        }
+
+        [HttpGet("list/page")]
+        public async Task<BaseResponse<PaginatedList<AdminPageUserSafetyResponse>>> listUserByPage([FromQuery] QueryUserRequest request)
+        {
+            if (request == null)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+
+            var query = _mapper.Map<ListUserByPageQuery>(request);
+            var result = await _mediator.Send(query);
+
+            var response = _mapper.Map<PaginatedList<AdminPageUserSafetyResponse>>(result);
+
+            return ResultUtils.success(response);
         }
     }
 }

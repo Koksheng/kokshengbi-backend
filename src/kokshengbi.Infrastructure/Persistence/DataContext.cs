@@ -1,4 +1,5 @@
-﻿using kokshengbi.Domain.Common.Models;
+﻿using kokshengbi.Domain.ChartAggregate;
+using kokshengbi.Domain.Common.Models;
 using kokshengbi.Domain.UserAggregate;
 using kokshengbi.Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace kokshengbi.Infrastructure.Persistence
             _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<Chart> Charts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
