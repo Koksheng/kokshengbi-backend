@@ -1,6 +1,7 @@
 ﻿using kokshengbi.Application.Common.Constants;
 using kokshengbi.Application.Common.Exceptions;
 using kokshengbi.Application.Common.Interfaces.Persistence;
+using kokshengbi.Application.Common.Models;
 using kokshengbi.Domain.ChartAggregate;
 using kokshengbi.Domain.ChartAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,55 @@ namespace kokshengbi.Infrastructure.Persistence.Repositories
             _context.Charts.Update(chart);
             // Save the changes to the database
             return await _context.SaveChangesAsync();
+        }
+
+        public async Task<PaginatedList<Chart>> ListByPage(Chart query, int current, int pageSize, string sortField, string sortOrder)
+        {
+            var queryable = _context.Charts.AsQueryable();
+
+            if (query.Id != null)
+            {
+                queryable = queryable.Where(i => i.Id == query.Id);
+            }
+
+            if (!string.IsNullOrEmpty(query.goal))
+            {
+                queryable = queryable.Where(i => i.goal.Contains(query.goal));
+            }
+
+            if (!string.IsNullOrEmpty(query.chartName))
+            {
+                queryable = queryable.Where(i => i.chartName.Contains(query.chartName));
+            }
+
+            if (!string.IsNullOrEmpty(query.chartType))
+            {
+                queryable = queryable.Where(i => i.chartType.Contains(query.chartType));
+            }
+
+            //if (query.userId != null)
+            //{
+            //    queryable = queryable.Where(i => i.userId == query.userId);
+            //}
+
+            // Continue with other filters...
+
+            if (!string.IsNullOrEmpty(sortField))
+            {
+                if (sortOrder == "asc")
+                {
+                    queryable = queryable.OrderBy(e => EF.Property<object>(e, sortField));
+                }
+                else
+                {
+                    queryable = queryable.OrderByDescending(e => EF.Property<object>(e, sortField));
+                }
+            }
+
+            var totalCount = await queryable.CountAsync();
+            var items = await queryable.Skip((current - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new PaginatedList<Chart>(items, totalCount, current, pageSize);
         }
     }
 }

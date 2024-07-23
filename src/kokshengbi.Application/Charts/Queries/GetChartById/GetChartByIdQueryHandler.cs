@@ -26,12 +26,12 @@ namespace kokshengbi.Application.Charts.Queries.GetChartById
                 throw new BusinessException(ErrorCode.PARAMS_ERROR);
             }
 
-            var interfaceInfo = await _chartRepository.GetById(query.Id);
-            if (interfaceInfo == null)
+            var chart = await _chartRepository.GetById(query.Id);
+            if (chart == null)
             {
                 throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "Chart not found.");
             }
-            var result = _mapper.Map<ChartSafetyResult>(interfaceInfo);
+            var result = _mapper.Map<ChartSafetyResult>(chart);
 
             return result;
         }

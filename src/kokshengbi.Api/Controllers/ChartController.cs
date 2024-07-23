@@ -3,6 +3,7 @@ using kokshengbi.Application.Charts.Commands.CreateChart;
 using kokshengbi.Application.Charts.Commands.DeleteChart;
 using kokshengbi.Application.Charts.Commands.UpdateChart;
 using kokshengbi.Application.Charts.Queries.GetChartById;
+using kokshengbi.Application.Charts.Queries.ListChartByPage;
 using kokshengbi.Application.Common.Constants;
 using kokshengbi.Application.Common.Exceptions;
 using kokshengbi.Application.Common.Models;
@@ -87,6 +88,22 @@ namespace kokshengbi.Api.Controllers
 
             // map result to response
             var response = _mapper.Map<ChartSafetyResponse>(result);
+
+            return ResultUtils.success(response);
+        }
+
+        [HttpGet("list/page")]
+        public async Task<BaseResponse<PaginatedList<ChartSafetyResponse>>> listChartByPage([FromQuery] QueryChartRequest request)
+        {
+            if (request == null)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+
+            var query = _mapper.Map<ListChartByPageQuery>(request);
+            var result = await _mediator.Send(query);
+
+            var response = _mapper.Map<PaginatedList<ChartSafetyResponse>>(result);
 
             return ResultUtils.success(response);
         }
