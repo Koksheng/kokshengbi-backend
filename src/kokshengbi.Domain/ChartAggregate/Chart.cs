@@ -6,13 +6,13 @@ namespace kokshengbi.Domain.ChartAggregate
     public sealed class Chart : AggregateRoot<ChartId, int>
     {
         public string goal { get; set; }
-        public string name { get; set; }
+        public string chartName { get; set; }
         public string chartData { get; set; }
         public string chartType { get; set; }
-        public string genChart { get; set; }
-        public string genResult { get; set; }
+        public string? genChart { get; set; }
+        public string? genResult { get; set; }
         public string status { get; set; }
-        public string execMessage { get; set; }
+        public string? execMessage { get; set; }
         public int userId { get; set; }
         public DateTime createTime { get; set; }
         public DateTime updateTime { get; set; }
@@ -21,13 +21,13 @@ namespace kokshengbi.Domain.ChartAggregate
         private Chart(
             ChartId chartId,
             string goal,
-            string name,
+            string chartName,
             string chartData,
             string chartType,
-            string genChart,
-            string genResult,
+            string? genChart,
+            string? genResult,
             string status,
-            string execMessage,
+            string? execMessage,
             int userId,
             DateTime createTime,
             DateTime updateTime,
@@ -35,7 +35,7 @@ namespace kokshengbi.Domain.ChartAggregate
             : base(chartId)
         {
             goal = goal;
-            name = name;
+            chartName = chartName;
             chartData = chartData;
             chartType = chartType;
             genChart = genChart;
@@ -50,7 +50,7 @@ namespace kokshengbi.Domain.ChartAggregate
 
         public static Chart Create(
             string goal,
-            string name,
+            string chartName,
             string chartData,
             string chartType,
             string genChart,
@@ -62,7 +62,7 @@ namespace kokshengbi.Domain.ChartAggregate
             return new(
                 null,  // EF Core will set this value
                 goal,
-                name,
+                chartName,
                 chartData,
                 chartType,
                 genChart,

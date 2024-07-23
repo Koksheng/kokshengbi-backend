@@ -39,6 +39,7 @@ namespace kokshengbi.Infrastructure
             // Register repositories
             services.AddScoped<PublishDomainEventsInterceptor>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IChartRepository, ChartRepository>();
             return services;
         }
 

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace kokshengbi.Contracts.Chart
+﻿namespace kokshengbi.Contracts.Chart
 {
     public record CreateChartRequest(
-
+        string chartName, string goal, string chartData, string chartType
         );
 }
