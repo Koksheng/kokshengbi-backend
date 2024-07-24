@@ -28,18 +28,18 @@ namespace kokshengbi.Application.Charts.Commands.UpdateChart
         /**
          * 生成的图表信息
          */
-        string genChart,
+        //string genChart,
 
         /**
          * 生成的分析结论
          */
-        string genResult,
+        //string genResult,
 
         /**
          * 创建图标用户 id
          */
-        int userId,
-        int isDelete,
+        //int userId,
+        //int isDelete,
         string userState
         ) : IRequest<BaseResponse<int>>;
 }
