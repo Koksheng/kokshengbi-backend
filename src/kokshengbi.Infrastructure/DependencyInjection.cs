@@ -25,6 +25,7 @@ namespace kokshengbi.Infrastructure
                 .AddPersistance(configuration);
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IExcelService, ExcelService>();
 
             return services;
         }

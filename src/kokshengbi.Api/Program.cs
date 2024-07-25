@@ -1,3 +1,4 @@
+using kokshengbi.Api.Middlewares;
 using kokshengbi.Application;
 using kokshengbi.Infrastructure;
 using Microsoft.OpenApi.Models;
@@ -71,8 +72,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage(); // Optional, for more detailed error information in development
 }
+
+// Use custom exception handling middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

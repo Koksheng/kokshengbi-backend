@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using kokshengbi.Application.Charts.Commands.CreateChart;
 using kokshengbi.Application.Charts.Commands.DeleteChart;
+using kokshengbi.Application.Charts.Commands.GenChartByAi;
 using kokshengbi.Application.Charts.Commands.UpdateChart;
 using kokshengbi.Application.Charts.Queries.GetChartById;
 using kokshengbi.Application.Charts.Queries.ListChartByPage;
@@ -106,6 +107,43 @@ namespace kokshengbi.Api.Controllers
             var response = _mapper.Map<PaginatedList<ChartSafetyResponse>>(result);
 
             return ResultUtils.success(response);
+        }
+
+        [HttpPost]
+        public async Task<BaseResponse<int>> genChartByAi([FromForm] GenChartByAiRequestWrapper requestWrapper)
+        {
+
+            if (requestWrapper.file == null || requestWrapper.file.Length == 0)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+
+            var request = requestWrapper.request;
+            if (request == null)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+
+            var userState = HttpContext.Session.GetString(ApplicationConstants.USER_LOGIN_STATE);
+            //if (userState == null)
+            //{
+            //    throw new BusinessException(ErrorCode.NOT_LOGIN);
+            //}
+
+            // Create the command and include the file
+            var command = new GenChartByAiCommand
+            {
+                chartName = request.chartName,
+                goal = request.goal,
+                chartType = request.chartType,
+                userState = userState,
+                file = requestWrapper.file // Include the file here
+            };
+
+            //// Send the command to the mediator
+            return await _mediator.Send(command);
+
+            //return ResultUtils.success(1);
         }
     }
 }
