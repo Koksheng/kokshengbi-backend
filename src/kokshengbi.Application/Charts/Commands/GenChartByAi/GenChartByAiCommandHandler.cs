@@ -4,11 +4,12 @@ using kokshengbi.Application.Common.Interfaces.Services;
 using kokshengbi.Application.Common.Models;
 using kokshengbi.Application.Common.Utils;
 using MediatR;
+using System.Text;
 
 namespace kokshengbi.Application.Charts.Commands.GenChartByAi
 {
     public class GenChartByAiCommandHandler :
-        IRequestHandler<GenChartByAiCommand, BaseResponse<int>>
+        IRequestHandler<GenChartByAiCommand, BaseResponse<string>>
     {
         private readonly IChartRepository _chartRepository;
         private readonly ICurrentUserService _currentUserService;
@@ -22,7 +23,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             _mapper = mapper;
             _excelService = excelService;
         }
-        public async Task<BaseResponse<int>> Handle(GenChartByAiCommand command, CancellationToken cancellationToken)
+        public async Task<BaseResponse<string>> Handle(GenChartByAiCommand command, CancellationToken cancellationToken)
         {
             //int id = command.id;
             string chartName = command.chartName;
@@ -32,7 +33,17 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
 
             //// 1. Verify User using userId in userState
             //var safetyUser = await _currentUserService.GetCurrentUserAsync(userState);
+
+            // 压缩后的数据
             var csvData = await _excelService.ConvertExcelToCsvAsync(command.file);
+
+            // 用户输入
+            StringBuilder userInput = new StringBuilder();
+            userInput.Append("你是一个数据分析师，接下来我会给你我的分析目标和原始数据，请告诉我分析结论。").Append("\n");
+            userInput.Append("分析目标：").Append(goal).Append("\n");
+            userInput.Append("数据：").Append(csvData).Append("\n");
+            return ResultUtils.success(userInput.ToString());
+
 
             //// 2. get the to be deleted item using id
             //Chart oldChart = await _chartRepository.GetById(id);
@@ -66,7 +77,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             //{
             //    throw new BusinessException(ErrorCode.OPERATION_ERROR);
             //}
-            return ResultUtils.success(1);
+            //return ResultUtils.success(1);
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace kokshengbi.Application.Charts.Commands.GenChartByAi
 {
-    public class GenChartByAiCommand : IRequest<BaseResponse<int>>
+    public class GenChartByAiCommand : IRequest<BaseResponse<string>>
     {
         public string chartName { get; set; }
         public string goal { get; set; }

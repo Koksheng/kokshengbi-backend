@@ -110,7 +110,7 @@ namespace kokshengbi.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse<int>> genChartByAi([FromForm] GenChartByAiRequestWrapper requestWrapper)
+        public async Task<BaseResponse<string>> genChartByAi([FromForm] GenChartByAiRequestWrapper requestWrapper)
         {
 
             if (requestWrapper.file == null || requestWrapper.file.Length == 0)

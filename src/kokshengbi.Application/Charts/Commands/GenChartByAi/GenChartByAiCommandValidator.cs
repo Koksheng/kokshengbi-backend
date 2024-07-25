@@ -10,7 +10,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
                 .NotEmpty();
             RuleFor(x => x.chartName)
                 .NotEmpty()
-                .MaximumLength(4).WithMessage("Chart Name too long.");
+                .MaximumLength(200).WithMessage("Chart Name too long.");
             RuleFor(x => x.chartType)
                 .NotEmpty();
 
