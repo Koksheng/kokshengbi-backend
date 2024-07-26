@@ -22,10 +22,54 @@ namespace kokshengbi.Infrastructure
         {
             services
                 .AddAuth(configuration)
-                .AddPersistance(configuration);
+                .AddPersistance(configuration)
+                .AddService(configuration);
+
+            return services;
+        }
+
+        public static IServiceCollection AddService(this IServiceCollection services, IConfiguration configuration)
+        {
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IExcelService, ExcelService>();
+            // Configure HttpClient for YuCongMingClient
+            //services.AddHttpClient<IYuCongMingClient, YuCongMingClient>()
+            //        .ConfigureHttpClient((serviceProvider, client) =>
+            //        {
+            //            var accessKey = configuration["YuCongMing:AccessKey"];
+            //            var secretKey = configuration["YuCongMing:SecretKey"];
+            //            client.DefaultRequestHeaders.Add("AccessKey", accessKey);
+            //            client.DefaultRequestHeaders.Add("SecretKey", secretKey);
+            //        });
+
+            //services.AddScoped<IYuCongMingClient, YuCongMingClient>(serviceProvider =>
+            //{
+            //    var httpClient = serviceProvider.GetRequiredService<HttpClient>();
+            //    var accessKey = configuration["YuCongMing:AccessKey"];
+            //    var secretKey = configuration["YuCongMing:SecretKey"];
+            //    return new YuCongMingClient(accessKey, secretKey, httpClient);
+            //});
+
+            // Configure HttpClient for YuCongMingClient
+            services.AddHttpClient<IYuCongMingClient, YuCongMingClient>()
+                    .ConfigureHttpClient(client =>
+                    {
+                        var accessKey = configuration["YuCongMing:AccessKey"];
+                        var secretKey = configuration["YuCongMing:SecretKey"];
+                        client.DefaultRequestHeaders.Add("AccessKey", accessKey);
+                        client.DefaultRequestHeaders.Add("SecretKey", secretKey);
+                    });
+
+            // Register the OpenAiClient
+            services.AddHttpClient<IOpenAiClient, OpenAiClient>((client, serviceProvider) =>
+            {
+                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                var apiKey = configuration["OpenAI:ApiKey"];
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                return new OpenAiClient(client, configuration);
+            });
+
 
             return services;
         }
