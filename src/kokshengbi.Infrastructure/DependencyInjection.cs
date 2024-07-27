@@ -61,14 +61,19 @@ namespace kokshengbi.Infrastructure
                         client.DefaultRequestHeaders.Add("SecretKey", secretKey);
                     });
 
-            // Register the OpenAiClient
-            services.AddHttpClient<IOpenAiClient, OpenAiClient>((client, serviceProvider) =>
-            {
-                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-                var apiKey = configuration["OpenAI:ApiKey"];
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                return new OpenAiClient(client, configuration);
-            });
+            //// Register the OpenAiClient
+            //services.AddHttpClient<IOpenAiClient, OpenAiClient>((client, serviceProvider) =>
+            //{
+            //    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            //    var apiKey = configuration["OpenAI:ApiKey"];
+            //    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            //    return new OpenAiClient(client, configuration);
+            //});
+
+            // Register the OpenAiService
+            var openAiApiKey = configuration["OpenAI:ApiKey"];
+            services.AddSingleton<IOpenAiService, OpenAiService>(provider => new OpenAiService(openAiApiKey));
+
 
 
             return services;
