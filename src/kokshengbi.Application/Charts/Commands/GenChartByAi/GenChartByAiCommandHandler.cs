@@ -53,22 +53,26 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             //userInput.Append("【【【【【\n");
             //userInput.Append("{明确的数据分析结论、越详细越好，不要生成多余的注释}");
 
-            // 用户输入
-            StringBuilder userInput = new StringBuilder();
-            userInput.Append("Data in csv separate with comma:").Append(csvData);
-            userInput.Append("Chart Type：").Append("Line Chart").Append(". \n");
-            userInput.Append("Requirement：").Append("Analyze data with the chart type above").Append(". \n");
-            // 压缩后的数据
-            userInput.Append("Generate response separate with [[[[[:").Append("\n");
-            userInput.Append("1. Echarts V5 in js code, only need the option array (no comments).\n");
-            userInput.Append("2. Detailed analysis conclusions (no comments).").Append(". \n");
+            //// 用户输入
+            //StringBuilder userInput = new StringBuilder();
+            //userInput.Append("Data in csv separated with comma:").Append("\n").Append(csvData);
+            //userInput.Append("Chart Type：").Append("Line Chart").Append(". \n");
+            //userInput.Append("Requirement：").Append("You are a Data Analyst now. Please analyze the data with the chart type above").Append(". \n");
+            //// 压缩后的数据
+            //userInput.Append("Generate a response based on:").Append("\n");
+            //userInput.Append("1. Echarts V5 in JS code for source of Echarts generation (no comments).\n");
+            //userInput.Append("2. Detailed analysis conclusions (no comments).").Append(". \n");
 
-            //Expected Result
-            userInput.Append("Expected Result:").Append("\n");
-            userInput.Append("[[[[[").Append("\n");
-            userInput.Append("option = { xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']  }, yAxis: { type: 'value' }, series: [ { data: [150, 230, 224, 218, 135, 147, 260], type: 'line' } ]};").Append("\n");
-            userInput.Append("[[[[[").Append("\n");
-            userInput.Append("Based on the data analysis, the number of users on the website increases daily. The longer the time period, the greater the growth in the number of users.").Append("\n");
+            ////Expected Result
+            //userInput.Append("Here is an example of expected response format. Please follow this format strictly.").Append("\n\n");
+            //userInput.Append("Echart:").Append("\n");
+            //userInput.Append("option = { xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n");
+            //userInput.Append("Conclusion:").Append("\n");
+            //userInput.Append("Based on the data analysis, the number of users shows a consistent increase over the three days. The number of users doubled from day 1 to day 2 and increased by 10 users each day, indicating a steady growth trend.").Append("\n");
+
+            //// 用户输入
+            StringBuilder userInput = new StringBuilder();
+            userInput.Append("Can u explain What is c# net core ?");
 
             // Now I wan to call the https://api.yucongming.com/api/dev
 
