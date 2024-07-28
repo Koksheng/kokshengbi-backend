@@ -19,7 +19,7 @@ namespace kokshengbi.Infrastructure.Services
             {
                 Model = "babbage-002",
                 Prompt = prompt,
-                MaxTokens = 1000
+                MaxTokens = 100
             };
 
             var completionResult = await _openAiApi.Completions.CreateCompletionAsync(completionRequest);

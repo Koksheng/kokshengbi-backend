@@ -40,18 +40,35 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             // 对内容进行压缩
             var csvData = await _excelService.ConvertExcelToCsvAsync(command.file);
 
+            //// 用户输入
+            //StringBuilder userInput = new StringBuilder();
+            ////userInput.Append("分析需求：").Append(goal).Append("\n");
+            //userInput.Append("分析需求：").Append("分析网站用户的增长情况").Append("\n");
+            //userInput.Append("请使用：").Append("line chart").Append("\n");
+            //// 压缩后的数据
+            //userInput.Append("原始数据：").Append(csvData).Append("\n");
+            //userInput.Append("请根据以上内容，按照以下指定格式生成内容（此外不要输出任何多余的开头、结尾、注释）").Append("\n");
+            //userInput.Append("【【【【【\n");
+            //userInput.Append("{前端 Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n");
+            //userInput.Append("【【【【【\n");
+            //userInput.Append("{明确的数据分析结论、越详细越好，不要生成多余的注释}");
+
             // 用户输入
             StringBuilder userInput = new StringBuilder();
-            //userInput.Append("分析需求：").Append(goal).Append("\n");
-            userInput.Append("分析需求：").Append("分析网站用户的增长情况").Append("\n");
-            userInput.Append("请使用：").Append("line chart").Append("\n");
+            userInput.Append("Data in csv separate with comma:").Append(csvData);
+            userInput.Append("Chart Type：").Append("Line Chart").Append(". \n");
+            userInput.Append("Requirement：").Append("Analyze data with the chart type above").Append(". \n");
             // 压缩后的数据
-            userInput.Append("原始数据：").Append(csvData).Append("\n");
-            userInput.Append("请根据以上内容，按照以下指定格式生成内容（此外不要输出任何多余的开头、结尾、注释）").Append("\n");
-            userInput.Append("【【【【【\n");
-            userInput.Append("{前端 Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n");
-            userInput.Append("【【【【【\n");
-            userInput.Append("{明确的数据分析结论、越详细越好，不要生成多余的注释}");
+            userInput.Append("Generate response separate with [[[[[:").Append("\n");
+            userInput.Append("1. Echarts V5 in js code, only need the option array (no comments).\n");
+            userInput.Append("2. Detailed analysis conclusions (no comments).").Append(". \n");
+
+            //Expected Result
+            userInput.Append("Expected Result:").Append("\n");
+            userInput.Append("[[[[[").Append("\n");
+            userInput.Append("option = { xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']  }, yAxis: { type: 'value' }, series: [ { data: [150, 230, 224, 218, 135, 147, 260], type: 'line' } ]};").Append("\n");
+            userInput.Append("[[[[[").Append("\n");
+            userInput.Append("Based on the data analysis, the number of users on the website increases daily. The longer the time period, the greater the growth in the number of users.").Append("\n");
 
             // Now I wan to call the https://api.yucongming.com/api/dev
 
@@ -60,7 +77,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             var openAiResponse = await _openAiService.GenerateTextAsync(userInput.ToString());
 
 
-            return ResultUtils.success(userInput.ToString());
+            return ResultUtils.success(openAiResponse);
         }
     }
 }
