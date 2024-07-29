@@ -67,17 +67,18 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             {
                 userInput.Append("Chart Type：").Append(chartType).Append(". \n");
             }
-            
+
+            userInput.Append("Chart Name：").Append(chartName).Append(". \n");
             userInput.Append("Requirement：").Append("You are a Data Analyst now. ").Append(goal).Append(". \n");
 
             userInput.Append("Generate a response based on:").Append("\n");
-            userInput.Append("1. Echarts V5 in JS code for source of Echarts generation (no comments).\n");
-            userInput.Append("2. Detailed analysis conclusions (no comments).").Append(". \n");
+            userInput.Append("1. Echarts V5 in Json code for source of Echarts generation, assign chartName as Echarts's title (no comments).\n");
+            userInput.Append("2. Detailed analysis conclusions (no comments).").Append("\n");
 
             //Expected Result (must use this one, if not the response key will name as echrtsCode and analysis)
             userInput.Append("Here is an example of expected response format. Please follow this format strictly.").Append("\n\n");
             userInput.Append("Echart:").Append("\n");
-            userInput.Append("option = { xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n");
+            userInput.Append("{ title: { text: 'Chart Name' }, xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n");
             userInput.Append("Conclusion:").Append("\n");
             userInput.Append("Based on the data analysis, the number of users shows a consistent increase over the three days. The number of users doubled from day 1 to day 2 and increased by 10 users each day, indicating a steady growth trend.").Append("\n");
 

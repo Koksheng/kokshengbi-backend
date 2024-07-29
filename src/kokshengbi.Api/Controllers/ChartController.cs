@@ -118,11 +118,11 @@ namespace kokshengbi.Api.Controllers
                 throw new BusinessException(ErrorCode.PARAMS_ERROR);
             }
 
-            var request = requestWrapper.request;
-            if (request == null)
-            {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR);
-            }
+            //var request = requestWrapper.request;
+            //if (request == null)
+            //{
+            //    throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            //}
 
             var userState = HttpContext.Session.GetString(ApplicationConstants.USER_LOGIN_STATE);
             if (userState == null)
@@ -133,9 +133,9 @@ namespace kokshengbi.Api.Controllers
             // Create the command and include the file
             var command = new GenChartByAiCommand
             {
-                chartName = request.chartName,
-                goal = request.goal,
-                chartType = request.chartType,
+                chartName = requestWrapper.chartName,
+                goal = requestWrapper.goal,
+                chartType = requestWrapper.chartType,
                 userState = userState,
                 file = requestWrapper.file // Include the file here
             };

@@ -8,7 +8,22 @@ namespace kokshengbi.Contracts.Chart
         [FromForm]
         public IFormFile file { get; set; }
 
-        [FromForm]
-        public GenChartByAiRequest request { get; set; }
+        //[FromForm]
+        //public GenChartByAiRequest request { get; set; }
+
+        /**
+         * 图表名称
+         */
+        public string chartName { get; set; }
+
+        /**
+         * 分析目标
+         */
+        public string goal { get; set; }
+
+        /**
+         * 图表类型
+         */
+        public string chartType { get; set; }
     }
 }

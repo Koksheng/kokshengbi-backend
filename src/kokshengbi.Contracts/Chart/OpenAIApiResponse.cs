@@ -1,6 +1,6 @@
 ﻿namespace kokshengbi.Contracts.Chart
 {
     public record OpenAIApiResponse(
-        string echart,
+        object echart,
         string conclusion);
 }
