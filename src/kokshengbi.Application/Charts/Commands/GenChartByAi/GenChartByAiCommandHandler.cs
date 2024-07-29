@@ -1,15 +1,19 @@
 ﻿using AutoMapper;
+using kokshengbi.Application.Charts.Common;
+using kokshengbi.Application.Common.Constants;
+using kokshengbi.Application.Common.Exceptions;
 using kokshengbi.Application.Common.Interfaces.Persistence;
 using kokshengbi.Application.Common.Interfaces.Services;
-using kokshengbi.Application.Common.Models;
-using kokshengbi.Application.Common.Utils;
+using kokshengbi.Contracts.Chart;
+using kokshengbi.Domain.ChartAggregate;
 using MediatR;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace kokshengbi.Application.Charts.Commands.GenChartByAi
 {
     public class GenChartByAiCommandHandler :
-        IRequestHandler<GenChartByAiCommand, BaseResponse<string>>
+        IRequestHandler<GenChartByAiCommand, BIResult>
     {
         private readonly IChartRepository _chartRepository;
         private readonly ICurrentUserService _currentUserService;
@@ -25,7 +29,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             _excelService = excelService;
             _openAiService = openAiService;
         }
-        public async Task<BaseResponse<string>> Handle(GenChartByAiCommand command, CancellationToken cancellationToken)
+        public async Task<BIResult> Handle(GenChartByAiCommand command, CancellationToken cancellationToken)
         {
             //int id = command.id;
             string chartName = command.chartName;
@@ -33,9 +37,8 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             string chartType = command.chartType;
             string userState = command.userState;
 
-            //// 1. Verify User using userId in userState
-            //var safetyUser = await _currentUserService.GetCurrentUserAsync(userState);
-            long biModelId = 1651468516836098050;
+            // 1. Verify User using userId in userState
+            var safetyUser = await _currentUserService.GetCurrentUserAsync(userState);
 
             // 对内容进行压缩
             var csvData = await _excelService.ConvertExcelToCsvAsync(command.file);
@@ -53,35 +56,61 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             //userInput.Append("【【【【【\n");
             //userInput.Append("{明确的数据分析结论、越详细越好，不要生成多余的注释}");
 
-            //// 用户输入
-            //StringBuilder userInput = new StringBuilder();
-            //userInput.Append("Data in csv separated with comma:").Append("\n").Append(csvData);
-            //userInput.Append("Chart Type：").Append("Line Chart").Append(". \n");
-            //userInput.Append("Requirement：").Append("You are a Data Analyst now. Please analyze the data with the chart type above").Append(". \n");
-            //// 压缩后的数据
-            //userInput.Append("Generate a response based on:").Append("\n");
-            //userInput.Append("1. Echarts V5 in JS code for source of Echarts generation (no comments).\n");
-            //userInput.Append("2. Detailed analysis conclusions (no comments).").Append(". \n");
-
-            ////Expected Result
-            //userInput.Append("Here is an example of expected response format. Please follow this format strictly.").Append("\n\n");
-            //userInput.Append("Echart:").Append("\n");
-            //userInput.Append("option = { xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n");
-            //userInput.Append("Conclusion:").Append("\n");
-            //userInput.Append("Based on the data analysis, the number of users shows a consistent increase over the three days. The number of users doubled from day 1 to day 2 and increased by 10 users each day, indicating a steady growth trend.").Append("\n");
-
-            //// 用户输入
+            // 用户输入
             StringBuilder userInput = new StringBuilder();
-            userInput.Append("Can u explain What is c# net core ?");
+            // 压缩后的数据
+            userInput.Append("Data in csv separated with comma:").Append("\n").Append(csvData);
+            //userInput.Append("Chart Type：").Append("Bar Chart").Append(". \n");
+            //userInput.Append("Requirement：").Append("You are a Data Analyst now. Please analyze the data with the chart type above").Append(". \n");
+            
+            if(!string.IsNullOrEmpty(chartType))
+            {
+                userInput.Append("Chart Type：").Append(chartType).Append(". \n");
+            }
+            
+            userInput.Append("Requirement：").Append("You are a Data Analyst now. ").Append(goal).Append(". \n");
 
-            // Now I wan to call the https://api.yucongming.com/api/dev
+            userInput.Append("Generate a response based on:").Append("\n");
+            userInput.Append("1. Echarts V5 in JS code for source of Echarts generation (no comments).\n");
+            userInput.Append("2. Detailed analysis conclusions (no comments).").Append(". \n");
 
-            //var aiResponse = await _openAiClient.GenerateTextAsync(userInput.ToString());
+            //Expected Result (must use this one, if not the response key will name as echrtsCode and analysis)
+            userInput.Append("Here is an example of expected response format. Please follow this format strictly.").Append("\n\n");
+            userInput.Append("Echart:").Append("\n");
+            userInput.Append("option = { xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n");
+            userInput.Append("Conclusion:").Append("\n");
+            userInput.Append("Based on the data analysis, the number of users shows a consistent increase over the three days. The number of users doubled from day 1 to day 2 and increased by 10 users each day, indicating a steady growth trend.").Append("\n");
+
 
             var openAiResponse = await _openAiService.GenerateTextAsync(userInput.ToString());
+            // Parse the JSON response using Newtonsoft.Json
+            var parsedResponse = JsonConvert.DeserializeObject<OpenAIApiResponse>(openAiResponse);
 
+            // 插入到数据库
+            Chart chart = _mapper.Map<Chart>(parsedResponse);
+            chart.goal = goal;
+            chart.chartName = chartName;
+            chart.chartData = csvData;
+            chart.chartType = chartType;
+            chart.status = "wait";
+            //chart.execMessage = "";
+            chart.userId = safetyUser.Id;
+            chart.createTime = DateTime.Now;
+            chart.updateTime = DateTime.Now;
+            //chart.isDelete = 0;
 
-            return ResultUtils.success(openAiResponse);
+            // Persist Chart
+            var result = await _chartRepository.Add(chart);
+
+            // Return BIResult
+            if (result == 1)
+            {
+                return _mapper.Map<BIResult>(chart);
+            }
+            else
+            {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR);
+            }
         }
     }
 }

@@ -3,15 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kokshengbi.Api", "src\kokshengbi.Api\kokshengbi.Api.csproj", "{98A60D49-1BBB-4D76-942A-135DA6ADE2EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kokshengbi.Api", "src\kokshengbi.Api\kokshengbi.Api.csproj", "{98A60D49-1BBB-4D76-942A-135DA6ADE2EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kokshengbi.Application", "src\kokshengbi.Application\kokshengbi.Application.csproj", "{8D46747E-A9DC-4F30-A88C-9680CEABDF8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kokshengbi.Application", "src\kokshengbi.Application\kokshengbi.Application.csproj", "{8D46747E-A9DC-4F30-A88C-9680CEABDF8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kokshengbi.Contracts", "src\kokshengbi.Contracts\kokshengbi.Contracts.csproj", "{7163C51A-4335-4A0D-9E06-579EFB6F9BE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kokshengbi.Contracts", "src\kokshengbi.Contracts\kokshengbi.Contracts.csproj", "{7163C51A-4335-4A0D-9E06-579EFB6F9BE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kokshengbi.Domain", "src\kokshengbi.Domain\kokshengbi.Domain.csproj", "{577D165A-2692-4E28-B15C-94A5B04BA69C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kokshengbi.Domain", "src\kokshengbi.Domain\kokshengbi.Domain.csproj", "{577D165A-2692-4E28-B15C-94A5B04BA69C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kokshengbi.Infrastructure", "src\kokshengbi.Infrastructure\kokshengbi.Infrastructure.csproj", "{C00E0DDA-9F90-4B27-A34D-7D0D257DB081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kokshengbi.Infrastructure", "src\kokshengbi.Infrastructure\kokshengbi.Infrastructure.csproj", "{C00E0DDA-9F90-4B27-A34D-7D0D257DB081}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{E4DB435A-0D95-41CF-BAE6-4E1DD784AFAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdown", "Markdown", "{2D82A97F-EC5E-40A0-9D08-5A7DC96DA27B}"
+	ProjectSection(SolutionItems) = preProject
+		doc\Markdown\openaiapi.md = doc\Markdown\openaiapi.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +49,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2D82A97F-EC5E-40A0-9D08-5A7DC96DA27B} = {E4DB435A-0D95-41CF-BAE6-4E1DD784AFAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8F92F272-2C79-4444-991F-2879FD1770AB}

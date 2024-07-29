@@ -110,7 +110,7 @@ namespace kokshengbi.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse<string>> genChartByAi([FromForm] GenChartByAiRequestWrapper requestWrapper)
+        public async Task<BaseResponse<BIResponse>> genChartByAi([FromForm] GenChartByAiRequestWrapper requestWrapper)
         {
 
             if (requestWrapper.file == null || requestWrapper.file.Length == 0)
@@ -125,10 +125,10 @@ namespace kokshengbi.Api.Controllers
             }
 
             var userState = HttpContext.Session.GetString(ApplicationConstants.USER_LOGIN_STATE);
-            //if (userState == null)
-            //{
-            //    throw new BusinessException(ErrorCode.NOT_LOGIN);
-            //}
+            if (userState == null)
+            {
+                throw new BusinessException(ErrorCode.NOT_LOGIN);
+            }
 
             // Create the command and include the file
             var command = new GenChartByAiCommand
@@ -140,10 +140,13 @@ namespace kokshengbi.Api.Controllers
                 file = requestWrapper.file // Include the file here
             };
 
-            //// Send the command to the mediator
-            return await _mediator.Send(command);
+            // Send the command to the mediator
+            var result = await _mediator.Send(command);
 
-            //return ResultUtils.success(1);
+            // map result to response
+            var response = _mapper.Map<BIResponse>(result);
+
+            return ResultUtils.success(response);
         }
     }
 }

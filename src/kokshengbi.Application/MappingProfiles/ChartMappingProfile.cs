@@ -52,6 +52,15 @@ namespace kokshengbi.Application.MappingProfiles
             // Mapping for PaginatedList<ChartSafetyResult> to PaginatedList<ChartSafetyResponse>
             CreateMap(typeof(PaginatedList<>), typeof(PaginatedList<>)).ConvertUsing(typeof(PaginatedListTypeConverter<,>));
 
+            // Gen Chart By AI (OpenAI Api)
+            CreateMap<OpenAIApiResponse, Chart>()
+               .ForMember(dest => dest.genChart, opt => opt.MapFrom(src => src.echart))
+               .ForMember(dest => dest.genResult, opt => opt.MapFrom(src => src.conclusion));
+            CreateMap<Chart, BIResult>()
+               .ForMember(dest => dest.GenChart, opt => opt.MapFrom(src => src.genChart))
+               .ForMember(dest => dest.GenResult, opt => opt.MapFrom(src => src.genResult))
+               .ForMember(dest => dest.ChartId, opt => opt.MapFrom(src => src.Id.Value));
+            CreateMap<BIResult, BIResponse>();
         }
     }
 }
