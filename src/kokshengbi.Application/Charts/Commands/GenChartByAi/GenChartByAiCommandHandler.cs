@@ -4,6 +4,7 @@ using kokshengbi.Application.Common.Constants;
 using kokshengbi.Application.Common.Exceptions;
 using kokshengbi.Application.Common.Interfaces.Persistence;
 using kokshengbi.Application.Common.Interfaces.Services;
+using kokshengbi.Application.Common.Utils;
 using kokshengbi.Contracts.Chart;
 using kokshengbi.Domain.ChartAggregate;
 using MediatR;
@@ -61,7 +62,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             // 压缩后的数据
             userInput.Append("Data in csv separated with comma:").Append("\n").Append(csvData);
             //userInput.Append("Chart Type：").Append("Bar Chart").Append(". \n");
-            //userInput.Append("Requirement：").Append("You are a Data Analyst now. Please analyze the data with the chart type above").Append(". \n");
+            //userInput.Append("Requirement：").Append("You are a Data Analyst now. Please analyze the data with the chart type").Append(". \n");
             
             if(!string.IsNullOrEmpty(chartType))
             {
@@ -72,7 +73,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             userInput.Append("Requirement：").Append("You are a Data Analyst now. ").Append(goal).Append(". \n");
 
             userInput.Append("Generate a response based on:").Append("\n");
-            userInput.Append("1. Echarts V5 in Json code for source of Echarts generation, assign chartName as Echarts's title (no comments).\n");
+            userInput.Append("1. Echarts V5 in Json code for source of Echarts generation, set chartName as Echarts's title and chartType as Echarts's type (no comments).\n");
             userInput.Append("2. Detailed analysis conclusions (no comments).").Append("\n");
 
             //Expected Result (must use this one, if not the response key will name as echrtsCode and analysis)
@@ -86,6 +87,8 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             var openAiResponse = await _openAiService.GenerateTextAsync(userInput.ToString());
             // Parse the JSON response using Newtonsoft.Json
             var parsedResponse = JsonConvert.DeserializeObject<OpenAIApiResponse>(openAiResponse);
+            //var parsedResponse = OpenAiResponseParser.ParseOpenAiResponse(openAiResponse);
+
 
             // 插入到数据库
             Chart chart = _mapper.Map<Chart>(parsedResponse);
