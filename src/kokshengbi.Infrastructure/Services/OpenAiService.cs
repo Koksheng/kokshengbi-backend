@@ -46,7 +46,7 @@ namespace kokshengbi.Infrastructure.Services
                 new ChatMessage(ChatMessageRole.System, "You are a helpful assistant designed to output JSON."),
                 new ChatMessage(ChatMessageRole.User, prompt)
             },
-                MaxTokens = 180,
+                MaxTokens = 450,
                 Temperature = 0.3
             };
 

@@ -69,25 +69,28 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
                 userInput.Append("Chart Type：").Append(chartType).Append(". \n");
             }
 
-            userInput.Append("Chart Name：").Append(chartName).Append(". \n");
-            userInput.Append("Requirement：").Append("You are a Data Analyst now. ").Append(goal).Append(". \n");
+            userInput.Append("Chart Name：").Append(chartName).Append(". \n")
+            .Append("Requirement：").Append("You are a Data Analyst now. ").Append(goal).Append(". \n")
 
-            userInput.Append("Generate a response based on:").Append("\n");
-            userInput.Append("1. Echarts V5 in Json code for source of Echarts generation, set chartName as Echarts's title and chartType as Echarts's type (no comments).\n");
-            userInput.Append("2. Detailed analysis conclusions (no comments).").Append("\n");
+            .Append("Generate a response based on:").Append("\n")
+            .Append("1. Echarts V5 in Json string for source of Echarts generation, set chartName as Echarts's title and chartType as Echarts's type (no comments). Ensure the JSON is correctly formatted for the specified chart type. For example:\n")
+            .Append("   - For line charts: { title: { text: 'Chart Name' }, xAxis: { type: 'category', data: [...] }, yAxis: { type: 'value' }, series: [ { data: [...], type: 'line' } ] }\n")
+            .Append("   - For pie charts: { title: { text: 'Chart Name', left: 'center' }, tooltip: { trigger: 'item' }, legend: { orient: 'vertical', left: 'left' }, series: [ { name: 'Access From', type: 'pie', radius: '50%', data: [...], emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } } } ] }\n")
+            .Append("   - For radar charts: { title: { text: 'Chart Name' }, legend: { data: ['Allocated Budget', 'Actual Spending'] }, radar: { indicator: [ { name: 'Sales', max: 6500 }, { name: 'Administration', max: 16000 }, { name: 'Information Technology', max: 30000 }, { name: 'Customer Support', max: 38000 }, { name: 'Development', max: 52000 }, { name: 'Marketing', max: 25000 } ] }, series: [ { name: 'Budget vs spending', type: 'radar', data: [ { value: [...], name: 'Allocated Budget' }, { value: [...], name: 'Actual Spending' } ] } ] }\n")
+            .Append("2. Detailed analysis conclusions (no comments).").Append("\n")
 
             //Expected Result (must use this one, if not the response key will name as echrtsCode and analysis)
-            userInput.Append("Here is an example of expected response format. Please follow this format strictly.").Append("\n\n");
-            userInput.Append("Echart:").Append("\n");
-            userInput.Append("{ title: { text: 'Chart Name' }, xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n");
-            userInput.Append("Conclusion:").Append("\n");
-            userInput.Append("Based on the data analysis, the number of users shows a consistent increase over the three days. The number of users doubled from day 1 to day 2 and increased by 10 users each day, indicating a steady growth trend.").Append("\n");
+            .Append("Here is an example of expected response format. Please follow this format strictly.").Append("\n\n")
+            .Append("Echart:").Append("\n")
+            .Append("{ title: { text: 'Chart Name' }, xAxis: { type: 'category', data: ['1', '2', '3'] }, yAxis: { type: 'value' }, series: [ { data: [10, 20, 30], type: 'line' } ]};").Append("\n")
+            .Append("Conclusion:").Append("\n")
+            .Append("Based on the data analysis, the number of users shows a consistent increase over the three days. The number of users doubled from day 1 to day 2 and increased by 10 users each day, indicating a steady growth trend.").Append("\n");
 
 
             var openAiResponse = await _openAiService.GenerateTextAsync(userInput.ToString());
             // Parse the JSON response using Newtonsoft.Json
-            var parsedResponse = JsonConvert.DeserializeObject<OpenAIApiResponse>(openAiResponse);
-            //var parsedResponse = OpenAiResponseParser.ParseOpenAiResponse(openAiResponse);
+            //var parsedResponse = JsonConvert.DeserializeObject<OpenAIApiResponse>(openAiResponse);
+            var parsedResponse = OpenAiResponseParser.ParseOpenAiResponse(openAiResponse);
 
 
             // 插入到数据库

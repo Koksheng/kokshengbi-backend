@@ -23,6 +23,9 @@ namespace kokshengbi.Application.Common.Utils
                     if (echartIndex != -1 && conclusionIndex != -1)
                     {
                         var echart = openAiResponse.Substring(echartIndex + 7, conclusionIndex - echartIndex - 7).Trim();
+                        // Remove trailing semicolon if it exists
+                        echart = echart.TrimEnd(';').Trim();
+
                         var conclusion = openAiResponse.Substring(conclusionIndex + 11).Trim();
 
                         return new OpenAIApiResponse(echart, conclusion);
