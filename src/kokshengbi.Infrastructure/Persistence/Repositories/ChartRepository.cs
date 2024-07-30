@@ -99,6 +99,11 @@ namespace kokshengbi.Infrastructure.Persistence.Repositories
             //    queryable = queryable.Where(i => i.userId == query.userId);
             //}
 
+            if (query.isDelete != null)
+            {
+                queryable = queryable.Where(i => i.isDelete == query.isDelete);
+            }
+
             // Continue with other filters...
 
             if (!string.IsNullOrEmpty(sortField))
