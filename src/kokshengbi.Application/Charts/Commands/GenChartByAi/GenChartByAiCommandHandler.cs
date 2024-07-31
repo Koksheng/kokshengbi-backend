@@ -5,10 +5,8 @@ using kokshengbi.Application.Common.Exceptions;
 using kokshengbi.Application.Common.Interfaces.Persistence;
 using kokshengbi.Application.Common.Interfaces.Services;
 using kokshengbi.Application.Common.Utils;
-using kokshengbi.Contracts.Chart;
 using kokshengbi.Domain.ChartAggregate;
 using MediatR;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace kokshengbi.Application.Charts.Commands.GenChartByAi
@@ -37,25 +35,37 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             string goal = command.goal;
             string chartType = command.chartType;
             string userState = command.userState;
+            var file = command.file;
 
-            // 1. Verify User using userId in userState
+            // Verify User using userId in userState
             var safetyUser = await _currentUserService.GetCurrentUserAsync(userState);
 
-            // 对内容进行压缩
-            var csvData = await _excelService.ConvertExcelToCsvAsync(command.file);
+            // 校验文件 Validate command.file
+            if (file == null)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "File is empty");
+            }
 
-            //// 用户输入
-            //StringBuilder userInput = new StringBuilder();
-            ////userInput.Append("分析需求：").Append(goal).Append("\n");
-            //userInput.Append("分析需求：").Append("分析网站用户的增长情况").Append("\n");
-            //userInput.Append("请使用：").Append("line chart").Append("\n");
-            //// 压缩后的数据
-            //userInput.Append("原始数据：").Append(csvData).Append("\n");
-            //userInput.Append("请根据以上内容，按照以下指定格式生成内容（此外不要输出任何多余的开头、结尾、注释）").Append("\n");
-            //userInput.Append("【【【【【\n");
-            //userInput.Append("{前端 Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n");
-            //userInput.Append("【【【【【\n");
-            //userInput.Append("{明确的数据分析结论、越详细越好，不要生成多余的注释}");
+            // 校验文件大小 Validate file size
+            const long ONE_MB = 1024 * 1024;
+            if (file.Length > ONE_MB)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件超过 1M, Files larger than 1M");
+            }
+
+            // 校验文件后缀 aaa.png Validate file extension
+            string originalFilename = file.FileName;
+            string suffix = Path.GetExtension(originalFilename).TrimStart('.').ToLower();
+            var validFileSuffixList = new List<string> { "xlsx" };
+
+            if (!validFileSuffixList.Contains(suffix))
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件后缀非法, Illegal file extension");
+            }
+
+
+            // 对内容进行压缩
+            var csvData = await _excelService.ConvertExcelToCsvAsync(file);
 
             // 用户输入
             StringBuilder userInput = new StringBuilder();

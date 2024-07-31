@@ -17,25 +17,6 @@ namespace kokshengbi.Infrastructure.Services
 
         public async Task<string> GenerateTextAsync(string prompt)
         {
-            //var completionRequest = new CompletionRequest
-            //{
-            //    //Model = "babbage-002",
-            //    //Model = "davinci-002",
-            //    Model = "gpt-3.5-turbo",
-            //    //Model = OpenAI_API.Models.Model.DavinciText,
-            //    Prompt = prompt,
-            //    MaxTokens = 250, // Increased token limit to accommodate a detailed response
-            //    Temperature = 0.3, // Adjust temperature to reduce randomness
-            //    TopP = 1.0,
-            //    FrequencyPenalty = 0.0,
-            //    PresencePenalty = 0.0
-            //};
-
-            //var completionResult = await _openAiApi.Completions.CreateCompletionAsync(completionRequest);
-
-            //return completionResult.Completions[0].Text;
-
-
             var chatRequest = new ChatRequest()
             {
                 Model = Model.ChatGPTTurbo,  // This corresponds to gpt-3.5-turbo, json *ChatGPTTurbo_1106)
