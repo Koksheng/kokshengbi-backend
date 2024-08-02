@@ -318,3 +318,19 @@ Assume the following settings:
 - The function returns **true** (allowed).
 
 In summary, the expiration mechanism is handled by Redis, ensuring the counter resets automatically after the specified period, allowing for rate-limiting without needing explicit expiration checks in the code.
+
+
+## Install Redis
+知识星球
+https://wx.zsxq.com/dweb2/index/columns/51122858222824
+编程导航 伙伴匹配项目教程
+https://www.code-nav.cn/course/1790950013153095682/section/1790950159395893250?type=#heading-36
+
+1. Install Redis
+https://redis.io/
+2. windows 下载 Redis 5.0.14
+https://pan.baidu.com/share/init?surl=XcsAIrdeesQAyQU2lE3cOg
+
+
+3. Install QuickRedis
+https://quick123.net/
