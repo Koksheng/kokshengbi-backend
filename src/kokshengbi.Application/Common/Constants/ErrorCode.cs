@@ -19,6 +19,7 @@
         public static readonly ErrorCode NOT_LOGIN = new ErrorCode(40100, "未登录", "");
         public static readonly ErrorCode NO_AUTH_ERROR = new ErrorCode(40101, "无权限", "");
         public static readonly ErrorCode EXISTED_ERROR = new ErrorCode(40201, "请求数据已存在", "");
+        public static readonly ErrorCode TOO_MANY_REQUEST = new ErrorCode(42900, "请求过于频繁", "");
         public static readonly ErrorCode FORBIDDEN_ERROR = new ErrorCode(40300, "禁止访问", "");
         public static readonly ErrorCode NOT_FOUND_ERROR = new ErrorCode(40400, "请求数据不存在", "");
         public static readonly ErrorCode SYSTEM_ERROR = new ErrorCode(50000, "系统内部异常", "");

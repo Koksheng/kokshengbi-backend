@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using kokshengbi.Application.Common.Interfaces.Services;
 using kokshengbi.Infrastructure.Services;
+using StackExchange.Redis;
 
 namespace kokshengbi.Infrastructure
 {
@@ -65,7 +66,9 @@ namespace kokshengbi.Infrastructure
             var openAiApiKey = configuration["OpenAI:ApiKey"];
             services.AddSingleton<IOpenAiService, OpenAiService>(provider => new OpenAiService(openAiApiKey));
 
-
+            // Configure Redis
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
+            services.AddScoped<IRedisRateLimiterService, RedisRateLimiterService>();
 
             return services;
         }
