@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdown", "Markdown", "{2D
 	ProjectSection(SolutionItems) = preProject
 		doc\Markdown\openaiapi.md = doc\Markdown\openaiapi.md
 		doc\Markdown\redis.md = doc\Markdown\redis.md
+		doc\Markdown\threadpool.md = doc\Markdown\threadpool.md
 	EndProjectSection
 EndProject
 Global
