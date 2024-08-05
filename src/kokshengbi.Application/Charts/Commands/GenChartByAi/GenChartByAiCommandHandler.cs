@@ -19,16 +19,16 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
         private readonly IMapper _mapper;
         private readonly IExcelService _excelService;
         private readonly IOpenAiService _openAiService;
-        private readonly IRedisRateLimiterService _rateLimiterService;
+        //private readonly IRedisRateLimiterService _rateLimiterService; // Comment this on office pc, cause dont have Redis 
 
-        public GenChartByAiCommandHandler(IChartRepository chartRepository, ICurrentUserService currentUserService, IMapper mapper, IExcelService excelService, IOpenAiService openAiService, IRedisRateLimiterService rateLimiterService)
+        public GenChartByAiCommandHandler(IChartRepository chartRepository, ICurrentUserService currentUserService, IMapper mapper, IExcelService excelService, IOpenAiService openAiService)
         {
             _chartRepository = chartRepository;
             _currentUserService = currentUserService;
             _mapper = mapper;
             _excelService = excelService;
             _openAiService = openAiService;
-            _rateLimiterService = rateLimiterService;
+            //_rateLimiterService = rateLimiterService; // Comment this on office pc, cause dont have Redis 
         }
         public async Task<BIResult> Handle(GenChartByAiCommand command, CancellationToken cancellationToken)
         {
@@ -42,11 +42,11 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             // Verify User using userId in userState
             var safetyUser = await _currentUserService.GetCurrentUserAsync(userState);
 
-            // Limit each user to 2 requests per second
-            if (!await _rateLimiterService.IsAllowedAsync($"genChartByAi_{safetyUser.Id}:{safetyUser.Id}", 2, TimeSpan.FromSeconds(1)))
-            {
-                throw new BusinessException(ErrorCode.TOO_MANY_REQUEST, "You have exceeded the request limit.");
-            }
+            //// Limit each user to 2 requests per second // Comment this on office pc, cause dont have Redis 
+            //if (!await _rateLimiterService.IsAllowedAsync($"genChartByAi_{safetyUser.Id}:{safetyUser.Id}", 2, TimeSpan.FromSeconds(1)))
+            //{
+            //    throw new BusinessException(ErrorCode.TOO_MANY_REQUEST, "You have exceeded the request limit.");
+            //}
 
             // 校验文件 Validate command.file
             if (file == null)

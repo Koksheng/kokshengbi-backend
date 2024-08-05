@@ -34,23 +34,6 @@ namespace kokshengbi.Infrastructure
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IExcelService, ExcelService>();
-            // Configure HttpClient for YuCongMingClient
-            //services.AddHttpClient<IYuCongMingClient, YuCongMingClient>()
-            //        .ConfigureHttpClient((serviceProvider, client) =>
-            //        {
-            //            var accessKey = configuration["YuCongMing:AccessKey"];
-            //            var secretKey = configuration["YuCongMing:SecretKey"];
-            //            client.DefaultRequestHeaders.Add("AccessKey", accessKey);
-            //            client.DefaultRequestHeaders.Add("SecretKey", secretKey);
-            //        });
-
-            //services.AddScoped<IYuCongMingClient, YuCongMingClient>(serviceProvider =>
-            //{
-            //    var httpClient = serviceProvider.GetRequiredService<HttpClient>();
-            //    var accessKey = configuration["YuCongMing:AccessKey"];
-            //    var secretKey = configuration["YuCongMing:SecretKey"];
-            //    return new YuCongMingClient(accessKey, secretKey, httpClient);
-            //});
 
             // Configure HttpClient for YuCongMingClient
             services.AddHttpClient<IYuCongMingClient, YuCongMingClient>()
@@ -66,9 +49,9 @@ namespace kokshengbi.Infrastructure
             var openAiApiKey = configuration["OpenAI:ApiKey"];
             services.AddSingleton<IOpenAiService, OpenAiService>(provider => new OpenAiService(openAiApiKey));
 
-            // Configure Redis
-            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
-            services.AddScoped<IRedisRateLimiterService, RedisRateLimiterService>();
+            // Configure Redis // Comment this on office pc, cause dont have Redis 
+            //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
+            //services.AddScoped<IRedisRateLimiterService, RedisRateLimiterService>();
 
             return services;
         }
