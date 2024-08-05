@@ -61,6 +61,9 @@ namespace kokshengbi.Application.MappingProfiles
                .ForMember(dest => dest.GenResult, opt => opt.MapFrom(src => src.genResult))
                .ForMember(dest => dest.ChartId, opt => opt.MapFrom(src => src.Id.Value));
             CreateMap<BIResult, BIResponse>();
+
+            // Gen Chart By Ai Async
+            CreateMap<GenChartByAiAsyncChartInit, Chart>();
         }
     }
 }

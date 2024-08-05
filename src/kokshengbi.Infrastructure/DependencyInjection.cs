@@ -53,6 +53,9 @@ namespace kokshengbi.Infrastructure
             //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
             //services.AddScoped<IRedisRateLimiterService, RedisRateLimiterService>();
 
+            // Register ThreadPoolService
+            services.AddSingleton<IThreadPoolService, ThreadPoolService>();
+
             return services;
         }
 
