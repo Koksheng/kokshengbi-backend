@@ -8,7 +8,9 @@ using kokshengbi.Application.Common.Interfaces.Services;
 using kokshengbi.Application.Common.Utils;
 using kokshengbi.Contracts.Chart;
 using kokshengbi.Domain.ChartAggregate;
+using kokshengbi.Domain.Constants;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,7 +123,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAiAsync
                 chartName = chartName,
                 chartData = csvData,
                 chartType = chartType,
-                status = "wait",
+                status = ApplicationConstants.CHART_STATUS_WAIT,
             };
             Chart chart = _mapper.Map<Chart>(genChartByAiAsyncChartInit);
             chart.userId = safetyUser.Id;
@@ -135,43 +137,37 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAiAsync
             }
 
             // Queue the background work
-            _threadPoolService.QueueBackgroundWorkItem(async cancellationToken =>
+            _threadPoolService.QueueBackgroundWorkItem(async (scope, cancellationToken) =>
             {
                 try
                 {
+                    var scopedChartRepository = scope.ServiceProvider.GetRequiredService<IChartRepository>();
+
                     // Update status to 'running'
-                    chart.status = "running";
-                    await _chartRepository.Update(chart);
+                    chart.status = ApplicationConstants.CHART_STATUS_RUNNING;
+                    await scopedChartRepository.Update(chart);
 
                     // Generate AI chart and analysis
                     var openAiResponse = await _openAiService.GenerateTextAsync(userInput.ToString());
                     var parsedResponse = OpenAiResponseParser.ParseOpenAiResponse(openAiResponse);
 
                     // Update chart with the generated data
-                    chart.genChart = (string?)parsedResponse.echart;
+                    chart.genChart = parsedResponse.echart.ToString();
                     chart.genResult = parsedResponse.conclusion;
-                    chart.status = "succeed";
-                    await _chartRepository.Update(chart);
+                    chart.status = ApplicationConstants.CHART_STATUS_SUCCEED;
+                    await scopedChartRepository.Update(chart);
                 }
                 catch (Exception ex)
                 {
-                    chart.status = "failed";
+                    var scopedChartRepository = scope.ServiceProvider.GetRequiredService<IChartRepository>();
+                    chart.status = ApplicationConstants.CHART_STATUS_FAILED;
                     chart.execMessage = ex.Message;
-                    await _chartRepository.Update(chart);
+                    await scopedChartRepository.Update(chart);
                 }
             });
 
-
-
             // Return BIResult
-            if (result == 1)
-            {
-                return _mapper.Map<BIResult>(chart);
-            }
-            else
-            {
-                throw new BusinessException(ErrorCode.OPERATION_ERROR);
-            }
+            return _mapper.Map<BIResult>(chart);
         }
     }
 }
