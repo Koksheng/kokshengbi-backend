@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿// Work Queues Tutorial
+
+using System.Text;
 using RabbitMQ.Client;
 
 var factory = new ConnectionFactory { HostName = "localhost" };

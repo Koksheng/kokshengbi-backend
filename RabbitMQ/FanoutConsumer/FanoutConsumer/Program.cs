@@ -1,4 +1,4 @@
-﻿// Hello World Tutorial
+﻿// Publish/Subscribe Tutorial
 
 using System.Text;
 using RabbitMQ.Client;
@@ -8,7 +8,6 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-// 创建队列
 channel.QueueDeclare(queue: "hello",
                      durable: false,
                      exclusive: false,
@@ -24,7 +23,6 @@ consumer.Received += (model, ea) =>
     var message = Encoding.UTF8.GetString(body);
     Console.WriteLine($" [x] Received {message}");
 };
-// 消费消息，会持续阻塞
 channel.BasicConsume(queue: "hello",
                      autoAck: true,
                      consumer: consumer);

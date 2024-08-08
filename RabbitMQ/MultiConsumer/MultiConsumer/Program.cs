@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿// Work Queues Tutorial
+
+using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
