@@ -1,4 +1,5 @@
 ﻿// Work Queues Tutorial
+// Run this MultiConsumer in 2 Visual Studio parallel, can each channel will consumer 1 diff msg
 
 using System.Text;
 using RabbitMQ.Client;
@@ -8,7 +9,7 @@ var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
 
-channel.QueueDeclare(queue: "task_queue",
+channel.QueueDeclare(queue: "multi_queue",
                      durable: true,
                      exclusive: false,
                      autoDelete: false,
@@ -33,7 +34,7 @@ consumer.Received += (model, ea) =>
     // here channel could also be accessed as ((EventingBasicConsumer)sender).Model
     channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
 };
-channel.BasicConsume(queue: "task_queue",
+channel.BasicConsume(queue: "multi_queue",
                      autoAck: false,
                      consumer: consumer);
 
