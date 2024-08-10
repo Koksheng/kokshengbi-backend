@@ -1,4 +1,4 @@
-﻿// Routing Tutorial
+﻿// Topics Tutorial
 
 using System.Text;
 using RabbitMQ.Client;
@@ -6,9 +6,9 @@ using RabbitMQ.Client;
 var factory = new ConnectionFactory { HostName = "localhost" };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-const string EXCHANGE_NAME = "direct-exchange";
+const string EXCHANGE_NAME = "topic-exchange";
 
-channel.ExchangeDeclare(exchange: EXCHANGE_NAME, type: ExchangeType.Direct);
+channel.ExchangeDeclare(exchange: EXCHANGE_NAME, type: ExchangeType.Topic);
 
 Console.WriteLine("Enter messages in the format: [message] [routingKey]");
 Console.WriteLine("Type 'exit' to quit.");
