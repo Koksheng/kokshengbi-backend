@@ -14,6 +14,8 @@ using System.Text;
 using kokshengbi.Application.Common.Interfaces.Services;
 using kokshengbi.Infrastructure.Services;
 using StackExchange.Redis;
+using kokshengbi.Infrastructure.Messaging;
+using kokshengbi.Application.Common.Interfaces.Messaging;
 
 namespace kokshengbi.Infrastructure
 {
@@ -55,6 +57,14 @@ namespace kokshengbi.Infrastructure
 
             // Register ThreadPoolService
             services.AddSingleton<IThreadPoolService, ThreadPoolService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Register Queue Messaging
+            services.AddSingleton<IBiMessageProducer, BiMessageProducer>();
 
             return services;
         }

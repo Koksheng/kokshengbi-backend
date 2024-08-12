@@ -3,6 +3,7 @@ using kokshengbi.Application.Charts.Commands.CreateChart;
 using kokshengbi.Application.Charts.Commands.DeleteChart;
 using kokshengbi.Application.Charts.Commands.GenChartByAi;
 using kokshengbi.Application.Charts.Commands.GenChartByAiAsync;
+using kokshengbi.Application.Charts.Commands.GenChartByAiAsyncMq;
 using kokshengbi.Application.Charts.Commands.UpdateChart;
 using kokshengbi.Application.Charts.Queries.GetChartById;
 using kokshengbi.Application.Charts.Queries.ListChartByPage;
@@ -173,6 +174,46 @@ namespace kokshengbi.Api.Controllers
 
             // Create the command and include the file
             var command = new GenChartByAiAsyncCommand
+            {
+                chartName = requestWrapper.chartName,
+                goal = requestWrapper.goal,
+                chartType = requestWrapper.chartType,
+                userState = userState,
+                file = requestWrapper.file // Include the file here
+            };
+
+            // Send the command to the mediator
+            var result = await _mediator.Send(command);
+
+            // map result to response
+            var response = _mapper.Map<BIResponse>(result);
+
+            return ResultUtils.success(response);
+        }
+
+        [HttpPost("genChartByAiAsyncMq")]
+        public async Task<BaseResponse<BIResponse>> genChartByAiAsyncMq([FromForm] GenChartByAiRequestWrapper requestWrapper)
+        {
+
+            if (requestWrapper.file == null || requestWrapper.file.Length == 0)
+            {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            }
+
+            //var request = requestWrapper.request;
+            //if (request == null)
+            //{
+            //    throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            //}
+
+            var userState = HttpContext.Session.GetString(ApplicationConstants.USER_LOGIN_STATE);
+            if (userState == null)
+            {
+                throw new BusinessException(ErrorCode.NOT_LOGIN);
+            }
+
+            // Create the command and include the file
+            var command = new GenChartByAiAsyncMqCommand
             {
                 chartName = requestWrapper.chartName,
                 goal = requestWrapper.goal,
