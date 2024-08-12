@@ -26,7 +26,8 @@ namespace kokshengbi.Infrastructure
             services
                 .AddAuth(configuration)
                 .AddPersistance(configuration)
-                .AddService(configuration);
+                .AddService(configuration)
+                .AddMessaging(configuration);
 
             return services;
         }
@@ -65,6 +66,8 @@ namespace kokshengbi.Infrastructure
         {
             // Register Queue Messaging
             services.AddSingleton<IBiMessageProducer, BiMessageProducer>();
+            services.AddSingleton<BiMessageConsumer>();
+            services.AddHostedService<BiMessageConsumerHostedService>();
 
             return services;
         }
