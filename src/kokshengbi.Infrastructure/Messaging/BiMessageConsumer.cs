@@ -4,6 +4,7 @@ using kokshengbi.Application.Common.Interfaces.Persistence;
 using kokshengbi.Application.Common.Interfaces.Services;
 using kokshengbi.Application.Common.Utils;
 using kokshengbi.Domain.ChartAggregate;
+using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -12,137 +13,93 @@ namespace kokshengbi.Infrastructure.Messaging
 {
     public class BiMessageConsumer : IBiMessageConsumer
     {
-        private readonly IChartRepository _chartRepository;
-        private readonly IOpenAiService _openAiService;
         private readonly IModel _channel;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public BiMessageConsumer(IChartRepository chartRepository, IOpenAiService openAiService)
+        public BiMessageConsumer(IServiceScopeFactory scopeFactory)
         {
-            _chartRepository = chartRepository;
-            _openAiService = openAiService;
+            _scopeFactory = scopeFactory;
 
-            //var factory = new ConnectionFactory() { HostName = "localhost" }; // Adjust hostname as needed
-            //var connection = factory.CreateConnection();
-            //_channel = connection.CreateModel();
+            var factory = new ConnectionFactory() { HostName = "localhost" }; // Adjust hostname as needed
+            var connection = factory.CreateConnection();
+            _channel = connection.CreateModel();
+
+            _channel.QueueDeclare(BiMqConstant.BI_QUEUE_NAME, true, false, false, null);
+        }
+
+        public void StartConsuming()
+        {
+            var consumer = new EventingBasicConsumer(_channel);
+            consumer.Received += async (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                await ConsumeMessage(message, ea.DeliveryTag);
+            };
+
+            _channel.BasicConsume(queue: BiMqConstant.BI_QUEUE_NAME,
+                                  autoAck: false,
+                                  consumer: consumer);
         }
 
         public async Task ConsumeMessage(string message, ulong deliveryTag)
         {
-            if (int.TryParse(message, out int chartId))
+            using (var scope = _scopeFactory.CreateScope())
             {
-                await ProcessMessage(chartId, deliveryTag);
-            }
-            else
-            {
-                // Handle invalid message format
-                throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid message format");
+                var chartRepository = scope.ServiceProvider.GetRequiredService<IChartRepository>();
+                var openAiService = scope.ServiceProvider.GetRequiredService<IOpenAiService>();
+
+                if (int.TryParse(message, out int chartId))
+                {
+                    var processMessageTask = ProcessMessage(chartId, deliveryTag, chartRepository, openAiService);
+                    await processMessageTask;
+                }
+                else
+                {
+                    // Handle invalid message format
+                    _channel.BasicNack(deliveryTag, false, false);
+                    //throw new BusinessException(ErrorCode.PARAMS_ERROR, "Invalid message format");
+                }
             }
         }
 
-        private async Task ProcessMessage(int chartId, ulong deliveryTag)
+        private async Task ProcessMessage(int chartId, ulong deliveryTag, IChartRepository chartRepository, IOpenAiService openAiService)
         {
-            var chart = await _chartRepository.GetById(chartId);
+            var chart = await chartRepository.GetById(chartId);
             if (chart == null)
             {
                 // Acknowledge message failure
-                // _channel.BasicNack(deliveryTag, false, false);
+                _channel.BasicNack(deliveryTag, false, false);
                 throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "Chart not found");
             }
 
             // Update chart status to "running"
             chart.status = "running";
-            await _chartRepository.Update(chart);
+            await chartRepository.Update(chart);
 
             try
             {
                 var userInput = buildUserInput(chart);
                 // Call AI service
-                var result = await _openAiService.GenerateTextAsync(userInput);
+                var result = await openAiService.GenerateTextAsync(userInput);
                 var parsedResponse = OpenAiResponseParser.ParseOpenAiResponse(result);
 
                 // Update chart with the generated response
                 chart.genChart = parsedResponse.echart.ToString();
                 chart.genResult = parsedResponse.conclusion;
                 chart.status = "succeed";
-                await _chartRepository.Update(chart);
+                await chartRepository.Update(chart);
 
                 // Acknowledge message
-                // _channel.BasicAck(deliveryTag, false);
+                _channel.BasicAck(deliveryTag, false);
             }
             catch (Exception ex)
             {
                 // Handle processing errors
-                // _channel.BasicNack(deliveryTag, false, false);
+                _channel.BasicNack(deliveryTag, false, false);
                 throw new Exception("Error processing message: " + ex.Message, ex);
             }
         }
-
-        //public void StartConsuming()
-        //{
-        //    var consumer = new EventingBasicConsumer(_channel);
-        //    consumer.Received += async (model, ea) =>
-        //    {
-        //        var body = ea.Body.ToArray();
-        //        var message = Encoding.UTF8.GetString(body);
-        //        var deliveryTag = ea.DeliveryTag;
-
-        //        try
-        //        {
-        //            await ProcessMessage(int.Parse(message), deliveryTag);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            // Handle exception
-        //            _channel.BasicNack(deliveryTag, false, false);
-        //        }
-        //    };
-
-        //    _channel.BasicConsume(queue: BiMqConstant.BI_QUEUE_NAME,
-        //                         autoAck: false,
-        //                         consumer: consumer);
-        //}
-
-        //private async Task ProcessMessage(int chartId, ulong deliveryTag)
-        //{
-        //    var chart = await _chartRepository.GetById(chartId);
-        //    if (chart == null)
-        //    {
-        //        _channel.BasicNack(deliveryTag, false, false);
-        //        throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "Chart not found");
-        //    }
-
-        //    // Update chart status to "running"
-        //    chart.status = "running";
-        //    await _chartRepository.Update(chart);
-
-        //    try
-        //    {
-        //        var userInput = buildUserInput(chart);
-        //        // Call AI service
-        //        var result = await _openAiService.GenerateTextAsync(userInput);
-
-        //        // Parse the response
-        //        var parsedResponse = OpenAiResponseParser.ParseOpenAiResponse(result);
-
-        //        // Update chart with the parsed result
-        //        chart.genChart = parsedResponse.echart.ToString();
-        //        chart.genResult = parsedResponse.conclusion;
-        //        chart.status = "succeed";
-
-        //        await _chartRepository.Update(chart);
-
-        //        // Acknowledge the message
-        //        _channel.BasicAck(deliveryTag, false);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Handle exception
-        //        chart.status = "failed";
-        //        chart.execMessage = ex.Message;
-        //        await _chartRepository.Update(chart);
-        //        _channel.BasicNack(deliveryTag, false, false);
-        //    }
-        //}
 
         private string buildUserInput(Chart chart)
         {

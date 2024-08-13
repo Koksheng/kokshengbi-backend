@@ -1,65 +1,33 @@
 ﻿using Microsoft.Extensions.Hosting;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
-using System.Text;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace kokshengbi.Infrastructure.Messaging
 {
-    public class BiMessageConsumerHostedService : BackgroundService
+    public class BiMessageConsumerHostedService : IHostedService
     {
-        private readonly IModel _channel;
-        private readonly IBiMessageConsumer _biMessageConsumer;
-        private readonly ILogger<BiMessageConsumerHostedService> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public BiMessageConsumerHostedService(
-            IBiMessageConsumer biMessageConsumer,
-            ILogger<BiMessageConsumerHostedService> logger,
-            IConnection connection)
+        public BiMessageConsumerHostedService(IServiceScopeFactory scopeFactory)
         {
-            _biMessageConsumer = biMessageConsumer;
-            _logger = logger;
-            _channel = connection.CreateModel();
-
-            _channel.ExchangeDeclare(BiMqConstant.BI_EXCHANGE_NAME, ExchangeType.Direct);
-            _channel.QueueDeclare(BiMqConstant.BI_QUEUE_NAME, true, false, false, null);
-            _channel.QueueBind(BiMqConstant.BI_QUEUE_NAME, BiMqConstant.BI_EXCHANGE_NAME, BiMqConstant.BI_ROUTING_KEY);
+            _scopeFactory = scopeFactory;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            stoppingToken.ThrowIfCancellationRequested();
-
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += async (model, ea) =>
+            // Start consuming messages
+            using (var scope = _scopeFactory.CreateScope())
             {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                var deliveryTag = ea.DeliveryTag;
-
-                try
-                {
-                    await _biMessageConsumer.ConsumeMessage(message, deliveryTag);
-                    _channel.BasicAck(deliveryTag, false);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error consuming message.");
-                    _channel.BasicNack(deliveryTag, false, false);
-                }
-            };
-
-            _channel.BasicConsume(queue: BiMqConstant.BI_QUEUE_NAME,
-                                  autoAck: false,
-                                  consumer: consumer);
-
+                var biMessageConsumer = scope.ServiceProvider.GetRequiredService<IBiMessageConsumer>();
+                biMessageConsumer.StartConsuming();
+            }
             return Task.CompletedTask;
         }
-        public override void Dispose()
+
+        public Task StopAsync(CancellationToken cancellationToken)
         {
-            _channel?.Close();
-            _channel?.Dispose();
-            base.Dispose();
+            // Handle cleanup if necessary
+            return Task.CompletedTask;
         }
     }
 }

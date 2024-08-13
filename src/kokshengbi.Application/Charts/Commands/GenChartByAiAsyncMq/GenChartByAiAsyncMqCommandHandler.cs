@@ -133,7 +133,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAiAsyncMq
             }
 
             // Send the message using the producer
-            _biMessageProducer.SendMessage(chart.Id.ToString());
+            _biMessageProducer.SendMessage(chart.Id.Value.ToString());
 
             // Return BIResult
             return _mapper.Map<BIResult>(chart);
