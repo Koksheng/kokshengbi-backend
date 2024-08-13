@@ -16,6 +16,7 @@ using kokshengbi.Infrastructure.Services;
 using StackExchange.Redis;
 using kokshengbi.Infrastructure.Messaging;
 using kokshengbi.Application.Common.Interfaces.Messaging;
+using RabbitMQ.Client;
 
 namespace kokshengbi.Infrastructure
 {
@@ -64,9 +65,15 @@ namespace kokshengbi.Infrastructure
 
         public static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IConnection>(sp =>
+            {
+                var factory = new ConnectionFactory() { HostName = "localhost" }; // Adjust hostname as needed
+                return factory.CreateConnection();
+            });
             // Register Queue Messaging
             services.AddSingleton<IBiMessageProducer, BiMessageProducer>();
-            services.AddSingleton<BiMessageConsumer>();
+            services.AddSingleton<IBiMessageConsumer, BiMessageConsumer>();
+            // Register the hosted service
             services.AddHostedService<BiMessageConsumerHostedService>();
 
             return services;

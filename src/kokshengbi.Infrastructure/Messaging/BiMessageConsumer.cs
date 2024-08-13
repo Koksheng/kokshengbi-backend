@@ -10,7 +10,7 @@ using System.Text;
 
 namespace kokshengbi.Infrastructure.Messaging
 {
-    public class BiMessageConsumer
+    public class BiMessageConsumer : IBiMessageConsumer
     {
         private readonly IChartRepository _chartRepository;
         private readonly IOpenAiService _openAiService;
