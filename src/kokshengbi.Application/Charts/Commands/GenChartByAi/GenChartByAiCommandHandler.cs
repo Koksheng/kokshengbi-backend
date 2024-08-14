@@ -117,7 +117,7 @@ namespace kokshengbi.Application.Charts.Commands.GenChartByAi
             chart.chartName = chartName;
             chart.chartData = csvData;
             chart.chartType = chartType;
-            chart.status = "wait";
+            chart.status = "succeed";
             //chart.execMessage = "";
             chart.userId = safetyUser.Id;
             chart.createTime = DateTime.Now;
