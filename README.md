@@ -42,8 +42,29 @@ Unlike traditional BI, users only need to upload raw data and input their analys
 ![image](https://github.com/user-attachments/assets/944e9950-7b63-4fef-bbd0-13ae0de64d7f)
 
 
-## Project Structure: (Pending)
-Infrastructure: The client analyzes input requests and raw data, sending requests to the business backend. The business backend uses AI services to process client data, stores it in the database, and generates charts. The processed data is sent from the business backend to the AI service, which generates results and returns them to the backend, ultimately sending the results back to the client for display.
+## Project Structure
+
+### Basic Structure
+- **User**: Inputs analysis goals and uploads raw data
+- **Backend (.NET Core)**: Validates, compresses, and processes the data;
+- **AI Service**: Generates charts and analysis conclusions
+- **Backend (.NET Core)**: Further processes and manages user data
+- **Database**: Stores the processed data
+  
+    ![image](https://github.com/user-attachments/assets/53dbdc3b-0030-4283-819f-72d76ca409d3)
+
+
+### Asynchronous Structure
+- **User**: Inputs analysis goals and uploads raw data
+- **Backend (.NET Core)**: Validates, compresses, and processes the data; enforces rate limiting of 2 requests per second; sends the data to the message queue
+- **Rate Limiting**: Limits each user to 2 requests per second
+- **Message Queue**: Acts as an intermediary between the message producer and receiver
+- **Task Processing Module**: Consumes and processes messages using the AI Service
+- **AI Service**: Generates charts and analysis conclusions
+- **Backend (.NET Core)**: Further processes the data and updates the analysis status
+- **Database**: Stores the processed data
+  
+    ![image](https://github.com/user-attachments/assets/512b50c9-974f-4447-8e17-673ca4530ae8)
 
 
 
