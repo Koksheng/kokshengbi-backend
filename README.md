@@ -36,7 +36,17 @@ Unlike traditional BI, users only need to upload raw data and input their analys
 ## Intelligent Analysis 
 ![image](https://github.com/user-attachments/assets/4bc151ed-a3fb-4a67-91c9-be1bfa9049de)
 
-## Intelligent Analysis (Async): (Pending)
+## Intelligent Analysis (Async): 
+
+  1. Submit Request
+      ![image](https://github.com/user-attachments/assets/4d9c63bc-03a0-4300-abb8-ea281b69b6be)
+
+  2. Processing Task
+     ![image](https://github.com/user-attachments/assets/1e8b60f6-055d-4e09-8ae5-b2b7a6039e70)
+
+  3. Reload to View Response 
+     ![image](https://github.com/user-attachments/assets/a9bf05c2-2c6d-4fbc-8cb9-99700d4aca1f)
+
 
 ## My Chart
 ![image](https://github.com/user-attachments/assets/944e9950-7b63-4fef-bbd0-13ae0de64d7f)
@@ -46,12 +56,12 @@ Unlike traditional BI, users only need to upload raw data and input their analys
 
 ### Basic Structure
 - **User**: Inputs analysis goals and uploads raw data
-- **Backend (.NET Core)**: Validates, compresses, and processes the data;
+- **Backend (.NET Core)**: Validates, compresses, and processes the data
 - **AI Service**: Generates charts and analysis conclusions
 - **Backend (.NET Core)**: Further processes and manages user data
 - **Database**: Stores the processed data
-  
-    ![image](https://github.com/user-attachments/assets/53dbdc3b-0030-4283-819f-72d76ca409d3)
+
+![image](https://github.com/user-attachments/assets/53dbdc3b-0030-4283-819f-72d76ca409d3)
 
 
 ### Asynchronous Structure
@@ -63,8 +73,8 @@ Unlike traditional BI, users only need to upload raw data and input their analys
 - **AI Service**: Generates charts and analysis conclusions
 - **Backend (.NET Core)**: Further processes the data and updates the analysis status
 - **Database**: Stores the processed data
-  
-    ![image](https://github.com/user-attachments/assets/512b50c9-974f-4447-8e17-673ca4530ae8)
+
+![image](https://github.com/user-attachments/assets/512b50c9-974f-4447-8e17-673ca4530ae8)
 
 
 
